@@ -207,7 +207,7 @@ usage() {
     echo "  --firewall ACTION    对防火墙执行 ACTION (enable 或 disable)"
     echo "  --packages LIST      指定要安装的附加软件包组，用逗号分隔"
     echo "                       可用包组: ${!PACKAGE_GROUPS[*]}"
-    echo "  --synctime whether   是否同步时间(true 或 false，默认 false)"
+    echo "  --synctime WHETHER   是否同步时间(true 或 false，默认 false)"
     echo "  -h, --help           显示此帮助信息"
     echo ""
     echo "示例:"
@@ -219,6 +219,8 @@ usage() {
     echo "    # 安装基础包、开发工具和网络诊断工具"
     echo "  $SCRIPT_FILE_NAME --packages dev --firewall enable"
     echo "    # 组合使用多个参数"
+    echo "  $SCRIPT_FILE_NAME --hostname my-server --firewall disable --packages base --synctime true"
+    echo "    # 全部参数示例"
 }
 
 
