@@ -1,0 +1,105 @@
+
+
+先安装 ollama
+
+curl -fsSL https://ollama.com/install.sh | sh
+
+不过此链接中脚本中的下载很慢
+
+所以
+
+curl -fsSL https://ollama.com/install.sh -o ollama_install.sh
+
+
+sed -i 's|https://ollama.com/download/ollama-linux|https://gh.llkk.cc/https://github.com/ollama/ollama/releases/download/v0.5.7/ollama-linux|g' ollama_install.sh
+
+
+
+验证 Ollama 是否安装成功
+
+ollama --version
+
+
+
+下载并运行 DeepSeek 模型
+
+ollama run deepseek-r1:1.5b  # 适用于纯 CPU 环境
+
+ollama run deepseek-r1:7b   # 7B 版本
+ollama run deepseek-r1:14b
+ollama run deepseek-r1:32b
+
+
+
+模型下载完成后，可以通过访问 http://localhost:11434 来与模型进行交互。
+
+
+如果需要在终端中直接使用，可以按以下方式操作：
+
+ollama chat deepseek-r1:1.5b
+
+
+
+安装 Chatbox 提升交互体验
+https://chatboxai.app/zh#download
+
+
+
+
+
+配置 Ollama 监听地址
+
+Ollama 默认只监听 127.0.0.1（本地地址），需要配置为监听所有网络接口（0.0.0.0），以便允许外部访问。
+
+sudo systemctl edit ollama.service
+
+
+在 [Service] 部分添加以下内容：
+
+[Service]
+Environment="OLLAMA_HOST=0.0.0.0"
+
+
+重启 Ollama 服务
+
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+
+
+
+关闭 firewalld
+
+查看防火墙状态
+
+sudo firewall-cmd --state
+
+
+关闭防火墙
+
+sudo systemctl stop firewalld
+
+
+禁用防火墙（防止开机启动）
+sudo systemctl disable firewalld
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -23,6 +23,8 @@ cd /home/gitea;
 #wget https://github.com/go-gitea/gitea/releases/download/v1.22.6/gitea-1.22.6-linux-amd64;
 wget https://gh-proxy.com/https://github.com/go-gitea/gitea/releases/download/v1.22.6/gitea-1.22.6-linux-amd64;
 
+chmod +x gitea-1.22.6-linux-amd64
+
 
 
 
