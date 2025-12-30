@@ -112,7 +112,10 @@ install_packages() {
         log_info "开始安装软件包..."
         log_info "将安装的包组: $DEFAULT_GROUPS ${groups_to_install[*]}"
         log_info "完整的软件包列表: $all_packages"
-        
+
+        # 先安装 epel-release，防止后面的 htop 安装失败
+        yum -y install epel-release
+
         if yum -y install $all_packages; then
             log_info "软件包安装成功。"
         else
@@ -219,6 +222,8 @@ usage() {
     echo "    # 安装基础包、开发工具和网络诊断工具"
     echo "  $SCRIPT_FILE_NAME --packages dev --firewall enable"
     echo "    # 组合使用多个参数"
+    echo "  $SCRIPT_FILE_NAME --hostname my-server --firewall disable --packages dev --synctime true"
+    echo "    # 全部参数示例"
 }
 
 

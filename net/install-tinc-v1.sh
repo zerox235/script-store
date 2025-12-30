@@ -148,10 +148,17 @@ IP地址: $NETWORK_ADDR
 4. 根据需要调整 $TINC_DIR 中的 tinc-up 和 tinc-down 的IP地址设置。
 5. 启动服务: tincd -n $NET_NAME
 6. 设置开机自启: 
-        设置主要服务：systemctl enable tinc
-        查询服务状态：systemctl status tinc
-        设置网络服务：systemctl enable tinc@$NET_NAME
-        查询服务状态：systemctl status tinc@$NET_NAME
+        启用服务（开机自启）：systemctl enable tinc
+        禁用服务：systemctl disable tinc
+        查询状态：systemctl status tinc
+        启动服务：systemctl start tinc
+        停止服务：systemctl stop tinc
+
+        启用服务（开机自启）：systemctl enable tinc@$NET_NAME
+        禁用服务：systemctl disable tinc@$NET_NAME
+        查询状态：systemctl status tinc@$NET_NAME
+        启动服务：systemctl start tinc@$NET_NAME
+        停止服务：systemctl stop tinc@$NET_NAME
 EOF
 
 # 打印自述文件

@@ -6,42 +6,43 @@
 # [作者]：Kahle
 # ==================================================
 
-# >> 引入方式 <<
+
+# ======== 【引入方式】 ========
 # [进程替换]：无磁盘I/O，使用管道内存传输，更快（需要给文件授权，通过 ./test.sh 执行）
 #REMOTE_SCRIPT="https://示例URL/test.sh"; source <(curl -Ls "$REMOTE_SCRIPT")
 # [临时文件]：有磁盘写入和读取操作，适合处理大文件
 #{ REMOTE_SCRIPT="https://示例URL/test.sh"; temp_file=$(mktemp) && curl -Ls "$REMOTE_SCRIPT" > "$temp_file" && source "$temp_file"; rm -f "$temp_file"; }
-
 # 引入公共脚本（ curl -Ls 可以替换为 wget -qO- ）
 #_D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/_func/_base.sh";
 #mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && source "$_F"; find "$_D" -name "_base.sh_*" -mtime +1 -delete 2>/dev/null &
+# =============================
 
 
+# ======== 【常用常量】 ========
 # 脚本文件名称
-readonly SCRIPT_FILE_NAME="$(basename "$0")";
+readonly script_file_name="$(basename "$0")";
 # 日志颜色
-readonly LOG_COLOR_NO='\033[0m';
-readonly LOG_COLOR_RED='\033[0;31m';
-readonly LOG_COLOR_GREEN='\033[0;32m';
-readonly LOG_COLOR_BLUE='\033[0;34m';
-readonly LOG_COLOR_YELLOW='\033[1;33m';
+readonly log_color_no='\033[0m';
+readonly log_color_red='\033[0;31m';
+readonly log_color_green='\033[0;32m';
+readonly log_color_blue='\033[0;34m';
+readonly log_color_yellow='\033[1;33m';
+# =============================
 
 
-# 通用日志方法
+# ======== 通用日志方法 ========
 # 参数1: 日志级别
 # 参数2: 颜色代码（默认: LOG_COLOR_NO）
 # 参数3: 是否输出到stderr（1=是, 0=否, 默认：0）
 # 参数4+: 日志消息
 _log() {
     local level="$1"
-    local color="${2:-$LOG_COLOR_NO}"
+    local color="${2:-$log_color_no}"
     local to_stderr="${3:-0}"
     local message="${@:4}"
-
     # 构建时间戳，构造日志消息
     local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
-    local log_message="${timestamp} ${color}[${level}]${LOG_COLOR_NO} ${message}"
-
+    local log_message="${timestamp} ${color}[${level}]${log_color_no} ${message}"
     # 根据to_stderr决定输出位置
     if [[ ${to_stderr} -eq 1 ]]; then
         echo -e "${log_message}" >&2
@@ -49,15 +50,18 @@ _log() {
         echo -e "${log_message}"
     fi
 }
-
-# 常用日志方法
-log_info()  { _log "INFO " "${LOG_COLOR_GREEN}"   0 "$@"; }
-log_info1() { _log "INFO " "${LOG_COLOR_BLUE}"    0 "$@"; }
-log_warn()  { _log "WARN " "${LOG_COLOR_YELLOW}"  0 "$@"; }
-log_error() { _log "ERROR" "${LOG_COLOR_RED}"     1 "$@"; }
+# ==============================
 
 
-# 方法开始、结束日志方法
+# ======== 常用日志方法 ========
+log_info()  { _log "INFO " "${log_color_green}"   0 "$@"; }
+log_info1() { _log "INFO " "${log_color_blue}"    0 "$@"; }
+log_warn()  { _log "WARN " "${log_color_yellow}"  0 "$@"; }
+log_error() { _log "ERROR" "${log_color_red}"     1 "$@"; }
+# ==============================
+
+
+# ======== 方法开始、结束日志方法 ========
 # 示例：
 #local mth_desc="方法描述"; log_method_start "$mth_desc";
 #log_method_end "$mth_desc";
@@ -68,9 +72,10 @@ log_method_start() {
 log_method_end() {
     log_info1 "<<<<<<<<<<<<<<<< [ end ] <<<<<<<<<<<<<<<<\n";
 }
+# =====================================
 
 
-# 检查root权限
+# ======== 检查root权限 ========
 # 示例：
 #if ! check_root; then
 #    exit 1
@@ -93,9 +98,10 @@ check_root() {
     fi
     return 0
 }
+# =============================
 
 
-# 下载并执行远程脚本的通用函数
+# ======== 下载并执行远程脚本的通用函数 ========
 # 参数1: 远程脚本URL
 # 参数2: 本地缓存目录（可选，默认/tmp/remote-func2512）
 # 参数3: 缓存天数（可选，默认1天）
@@ -160,6 +166,8 @@ load_remote_script() {
     # 结束
     return 0
 }
+# ===========================================
+
 
 
 
