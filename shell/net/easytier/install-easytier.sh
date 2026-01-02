@@ -9,7 +9,7 @@
 
 
 # 引入公共脚本（ curl -Ls 可以替换为 wget -qO- ）
-_D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/_func/_base.sh";
+_D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/_func/_base.sh";
 mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && source "$_F"; find "$_D" -name "_base.sh_*" -mtime +1 -delete 2>/dev/null &
 
 
@@ -23,8 +23,8 @@ pkg_dir="/opt/pkg/easytier"
 
 binary_url="https://ghfast.top/https://github.com/EasyTier/EasyTier/releases/download/v2.4.5/easytier-linux-x86_64-v2.4.5.zip"
 script_urls=(
-    "https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/dev_tmp/tools/easytier/easytier-core.sh"
-    "https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/dev_tmp/tools/easytier/easytier-web.sh"
+    "https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/net/easytier/easytier-core.sh"
+    "https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/net/easytier/easytier-web.sh"
 )
 
 log_info "开始安装 EasyTier..."

@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==================================================
-# EasyTier Web 服务管理脚本
-# [功能]：支持启动/停止/重启操作，可配置使用 easytier-web-embed 或 easytier-web
+# EasyTier Core 服务管理脚本（基于 Web 控制台）
+# [功能]：支持启动/停止/重启/状态操作
 # [文档]：https://easytier.cn/guide/network/web-console.html
 # [日期]：2026-05-02
 # [作者]：Kahle
@@ -9,21 +9,14 @@
 
 
 # 引入公共脚本（ curl -Ls 可以替换为 wget -qO- ）
-_D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/_func/_base.sh";
+_D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/_func/_base.sh";
 mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && source "$_F"; find "$_D" -name "_base.sh_*" -mtime +1 -delete 2>/dev/null &
 
 # ======== 配置区域 ========
 # 基础目录
 base_dir="/opt/easytier"
-# 选择运行模式: embed 或 web （EasyTier的web控制台有2个版本）
-# embed: 使用 easytier-web-embed (web前端 + web api后端)
-# web: 使用 easytier-web (仅web api后端)
-run_mode="embed"
 # 服务端口配置
-api_server_port="11211"
-api_host="http://127.0.0.1:11211"
-config_server_port="22020"
-config_server_protocol="udp"
+console_address="udp://127.0.0.1:22020/user"
 # =========================
 
 
@@ -33,16 +26,7 @@ bin_dir="${base_dir}/bin"
 run_dir="${base_dir}/run"
 log_dir="${base_dir}/log"
 
-# 根据运行模式选择二进制文件
-if [ "${run_mode}" = "embed" ]; then
-    binary_name="easytier-web-embed"
-elif [ "${run_mode}" = "web" ]; then
-    binary_name="easytier-web"
-else
-    log_error "run_mode 必须是 'embed' 或 'web'"
-    exit 1
-fi
-
+binary_name="easytier-core"
 binary_path="${bin_dir}/${binary_name}"
 pid_file="${run_dir}/${binary_name}.pid"
 log_file="${log_dir}/${binary_name}.log"
@@ -76,10 +60,7 @@ start() {
 
     log_info "启动 ${binary_name}..."
     nohup "${binary_path}" \
-        --api-server-port "${api_server_port}" \
-        --api-host "${api_host}" \
-        --config-server-port "${config_server_port}" \
-        --config-server-protocol "${config_server_protocol}" \
+        -w "${console_address}" \
         > "${log_file}" 2>&1 &
 
     echo $! > "${pid_file}"
@@ -134,18 +115,14 @@ usage() {
     log_info1 "配置说明:"
     log_info1 "  修改脚本头部的配置区域来自定义以下参数:"
     log_info1 "  - base_dir: 基础目录 (默认: /opt/easytier)"
-    log_info1 "  - run_mode: 运行模式 (embed 或 web)"
-    log_info1 "  - api_server_port: API 服务端口"
-    log_info1 "  - api_host: API 主机地址"
-    log_info1 "  - config_server_port: 配置服务端口"
-    log_info1 "  - config_server_protocol: 配置服务协议 (tcp/udp)"
+    log_info1 "  - console_address: 控制台地址 (默认: udp://127.0.0.1:22020/user)"
     log_info1 ""
     log_info1 "文件结构:"
     log_info1 "  ${base_dir}/"
     log_info1 "  bin/          # 二进制文件目录"
     log_info1 "  run/          # PID 文件目录"
     log_info1 "  log/          # 日志文件目录"
-    log_info1 "  easytier-web.sh  # 当前脚本"
+    log_info1 "  easytier-core.sh  # 当前脚本"
 }
 
 # 主逻辑
