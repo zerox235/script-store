@@ -30,10 +30,7 @@ script_urls=(
 log_info "开始安装 EasyTier..."
 
 log_info "创建目录结构..."
-mkdir -p "${bin_dir}"
-mkdir -p "${run_dir}"
-mkdir -p "${log_dir}"
-mkdir -p "${pkg_dir}"
+mkdirs "${bin_dir}" "${run_dir}" "${log_dir}" "${pkg_dir}" || exit 1
 
 pkg_zip="${pkg_dir}/easytier-linux-x86_64-v2.4.5.zip"
 if [ -f "${pkg_zip}" ]; then

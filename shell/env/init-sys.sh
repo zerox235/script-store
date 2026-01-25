@@ -75,7 +75,7 @@ sync_time() {
 
 # 安装软件包
 install_packages() {
-    local mth_desc="安装软件包"; log_method_start "$mth_desc";
+    log_method_start "安装软件包";
     # 例如："dev,net"
     local requested_groups_param="$1" 
     local groups_to_install=()
@@ -127,7 +127,7 @@ install_packages() {
     fi
 
     # 结束
-    log_method_end "$mth_desc"
+    log_method_end
 }
 
 

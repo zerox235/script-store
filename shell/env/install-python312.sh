@@ -24,7 +24,7 @@ DOWNLOAD_URL="https://mirrors.tuna.tsinghua.edu.cn/python/${PYTHON_VERSION}/Pyth
 
 
 # 开始日志
-mth_desc="安装 Python ${PYTHON_VERSION}"; log_method_start "$mth_desc";
+log_method_start "安装 Python ${PYTHON_VERSION}";
 log_info "安装目录: ${INSTALL_DIR}"
 
 
@@ -179,5 +179,5 @@ fi
 
 
 # 结束日志
-log_method_end "$mth_desc";
+log_method_end
 

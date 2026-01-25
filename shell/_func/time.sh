@@ -4,7 +4,7 @@
 # date -s "2025-08-25 17:51:00"
 # date '+%Y-%m-%d %H:%M:%S %Z'
 configure_and_sync_ntp() {
-    local mth_desc="chronyd时间同步"; log_method_start "$mth_desc";
+    log_method_start "chronyd时间同步";
     
     # 检查root权限
     if ! check_root; then 
@@ -102,7 +102,7 @@ configure_and_sync_ntp() {
         chronyc tracking | grep -E "(Leap status|System time|Last offset|Root delay|Reference ID)"
     fi
     
-	log_method_end "$mth_desc"
+	log_method_end
     return 0
 }
 
@@ -112,7 +112,7 @@ configure_and_sync_ntp() {
 # hwclock --set --date="2025-08-25 17:51:00"
 # hwclock --show
 sync_to_hardware_clock() {
-    local mth_desc="将系统时间同步到硬件时钟"; log_method_start "$mth_desc";
+    log_method_start "将系统时间同步到硬件时钟"
 
     # 1. 工具检查
     if ! command -v hwclock &>/dev/null; then
@@ -211,7 +211,7 @@ sync_to_hardware_clock() {
         log_error "硬件时间: 无法读取"
     fi
     
-    log_method_end "$mth_desc";
+    log_method_end
     return 0
 }
 

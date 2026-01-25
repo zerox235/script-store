@@ -25,22 +25,17 @@ console_address="udp://127.0.0.1:22020/user"
 bin_dir="${base_dir}/bin"
 run_dir="${base_dir}/run"
 log_dir="${base_dir}/log"
-
+# 文件路径
 binary_name="easytier-core"
 binary_path="${bin_dir}/${binary_name}"
 pid_file="${run_dir}/${binary_name}.pid"
 log_file="${log_dir}/${binary_name}.log"
 
-# 确保目录存在
-ensure_dirs() {
-    mkdir -p "${bin_dir}"
-    mkdir -p "${run_dir}"
-    mkdir -p "${log_dir}"
-}
 
 # 启动服务
 start() {
-    ensure_dirs
+    # 确保目录存在
+    mkdirs "${bin_dir}" "${run_dir}" "${log_dir}" || exit 1
 
     if [ ! -f "${binary_path}" ]; then
         log_error "二进制文件不存在 - ${binary_path}"
