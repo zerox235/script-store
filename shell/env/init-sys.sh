@@ -11,6 +11,8 @@ set -e;
 # 引入公共脚本（ curl -Ls 可以替换为 wget -qO- ）
 _D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/_func/_base.sh";
 mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && source "$_F"; find "$_D" -name "_base.sh_*" -mtime +1 -delete 2>/dev/null &
+# 引入内置脚本
+load_inbuilt_script "time"
 
 
 # 关联数组，定义不同的软件包组
@@ -64,7 +66,6 @@ sync_time() {
     local action="$1"
     if [[ "$action" == "true" ]]; then
         log_info "开始时间同步..."
-        load_remote_script "https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/_func/time.sh"
         configure_and_sync_ntp
         sync_to_hardware_clock
     else

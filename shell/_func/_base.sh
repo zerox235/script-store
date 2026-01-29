@@ -293,6 +293,24 @@ load_remote_script() {
 # ==================================
 
 
+# ======== 下载并执行内置脚本 ========
+# 参数1: 脚本名（自动去除.sh后缀）
+# 参数2: 本地缓存目录（可选，默认/tmp/remote-func2512）
+# 参数3: 缓存天数（可选，默认1天）
+# 示例[基本用法]：load_inbuilt_script "sys"
+# 示例[指定缓存目录和天数]：load_inbuilt_script "sys" "/tmp/myscripts" 3
+load_inbuilt_script() {
+    local script_name="$1"
+    if [[ -z "$script_name" ]]; then
+        log_error "错误: 必须提供脚本名"
+        return 1
+    fi
+    local script_name_clean="${script_name%.sh}"
+    #local remote_script_url="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/_func/${script_name_clean}.sh"
+    local remote_script_url="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/dev_tmp/shell/_func/${script_name_clean}.sh"
+    load_remote_script "$remote_script_url" "$2" "$3"
+}
+# ==================================
 
 
 
