@@ -8,14 +8,17 @@
 # ==================================================
 
 
+
+# 确保脚本在执行错误时退出
+set -e
 # 引入公共脚本（ curl -Ls 可以替换为 wget -qO- ）
 _D="/tmp/remote-func2512"; _F="$_D/_base.sh_$(date +%Y%m%d)"; _R="https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-store/refs/heads/master/shell/_func/_base.sh";
 mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && source "$_F"; find "$_D" -name "_base.sh_*" -mtime +1 -delete 2>/dev/null &
 # 引入内置脚本
 load_inbuilt_script "extension/mirror-download"
 
-set -e
 
+# 定义安装目录
 base_dir="/opt/easytier"
 bin_dir="${base_dir}/bin"
 run_dir="${base_dir}/run"

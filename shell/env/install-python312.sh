@@ -28,10 +28,8 @@ log_method_start "安装 Python ${PYTHON_VERSION}";
 log_info "安装目录: ${INSTALL_DIR}"
 
 
-# 检查是否为root用户
-if ! check_root; then
-    exit 1
-fi
+# 检查 root 权限
+if ! check_root; then exit 1; fi
 
 
 # 1. 安装依赖包

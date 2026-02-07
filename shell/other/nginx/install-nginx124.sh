@@ -12,9 +12,7 @@ mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && sourc
 
 
 # 检查 root 权限
-if ! check_root; then
-    exit 1
-fi
+if ! check_root; then exit 1; fi
 
 
 # 安装依赖

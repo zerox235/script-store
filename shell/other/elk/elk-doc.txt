@@ -1,0 +1,54 @@
+ELK 运维手册
+==============
+
+一、服务管理
+------------
+# 单个服务操作（替换 service 为 elasticsearch/logstash/kibana）
+systemctl start|stop|restart|status|enable|disable service
+
+# 批量操作
+systemctl start elasticsearch logstash kibana
+systemctl stop elasticsearch logstash kibana
+systemctl restart elasticsearch logstash kibana
+systemctl status elasticsearch logstash kibana
+
+二、日志查看
+------------
+# 实时查看（替换 service）
+journalctl -u service -f
+tail -f /var/log/service/*.log
+
+# 查看最近日志
+journalctl -u service -n 100
+
+三、配置文件
+------------
+ES:     /etc/elasticsearch/elasticsearch.yml
+ES_JVM: /etc/elasticsearch/jvm.options
+LS:     /etc/logstash/conf.d/simple.conf
+LS_JVM: /etc/logstash/jvm.options
+Kibana: /etc/kibana/kibana.yml
+
+四、常用检查
+------------
+curl http://localhost:9200                    # 检查ES
+curl http://localhost:9200/_cluster/health    # ES集群状态
+curl http://localhost:5601/api/status         # 检查Kibana
+
+五、访问地址
+------------
+ES:   http://IP:9200
+Kibana: http://IP:5601
+Logstash: TCP 5000, Beats 5044
+
+六、注意事项
+------------
+1. 修改配置后需重启服务
+2. ES启动约需10秒，建议等待后再检查
+3. Logstash需ES正常运行后启动
+
+七、卸载（如需）
+---------------
+systemctl stop elasticsearch logstash kibana
+yum remove -y elasticsearch logstash kibana
+

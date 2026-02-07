@@ -14,11 +14,9 @@
 configure_and_sync_ntp() {
     log_method_start "chronyd时间同步";
     
-    # 检查root权限
-    if ! check_root; then 
-        exit 1 
-    fi
-	
+    # 检查 root 权限
+    if ! check_root; then exit 1; fi
+
 	
     # 1. 检查chronyd是否安装
     log_info ">> 1. 检查chronyd是否安装..."
