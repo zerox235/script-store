@@ -80,28 +80,19 @@ log_method_end() {
 # 返回值: 0=是root, 1=非root
 # 示例[检查权限并退出]: if ! check_root; then exit 1; fi
 check_root() {
-    local uid who
-    # 基于uid检查是否为root用户
-    if type id >/dev/null 2>&1; then
-        uid=$(id -u)
-        if [ "$uid" -eq 0 ] 2>/dev/null; then
-            return 0
-        fi
-    fi
-    # 基于EUID检查是否为root用户
+    # 优先使用EUID环境变量（最快）
     if [ -n "$EUID" ] && [ "$EUID" -eq 0 ] 2>/dev/null; then
         return 0
+    # 使用id命令检查（可靠且广泛支持）
+    elif type id >/dev/null 2>&1 && [ "$(id -u)" -eq 0 ] 2>/dev/null; then
+        return 0
+    # 使用whoami命令检查（最后的备用方案）
+    elif type whoami >/dev/null 2>&1 && [ "$(whoami)" = "root" ]; then
+        return 0
     fi
-    # 基于whoami检查是否为root用户
-    if type whoami >/dev/null 2>&1; then
-        who=$(whoami)
-        if [ "$who" = "root" ]; then
-            return 0
-        fi
-    fi
-    # 其他情况，提示错误
+    # 非root用户，提示错误
     log_error "错误: 需要root权限" >&2
-    log_error "请使用: sudo $0 $*" >&2
+    log_error "请使用: sudo $0 [参数]" >&2
     return 1
 }
 # =============================

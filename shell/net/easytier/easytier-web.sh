@@ -121,9 +121,83 @@ status() {
     fi
 }
 
+# 安装服务
+install() {
+    local service_file="/etc/systemd/system/${binary_name}.service"
+    
+    if [ -f "${service_file}" ]; then
+        log_warn "服务已存在，先卸载旧服务..."
+        uninstall
+    fi
+
+    log_info "安装 ${binary_name} 服务..."
+    
+    sudo cat > "${service_file}" <<EOF
+[Unit]
+Description=EasyTier Web Service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=${base_dir}/easytier-web.sh start
+ExecStop=${base_dir}/easytier-web.sh stop
+ExecReload=${base_dir}/easytier-web.sh restart
+PIDFile=${pid_file}
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    if [ $? -ne 0 ]; then
+        log_error "创建服务文件失败"
+        exit 1
+    fi
+
+    sudo chmod 644 "${service_file}"
+    sudo systemctl daemon-reload
+    sudo systemctl enable "${binary_name}"
+    sudo systemctl start "${binary_name}"
+
+    if [ $? -eq 0 ]; then
+        log_info "服务安装成功"
+        log_info "服务已设置为开机自启"
+    else
+        log_error "服务启动失败"
+        sudo rm -f "${service_file}"
+        exit 1
+    fi
+}
+
+# 卸载服务
+uninstall() {
+    local service_file="/etc/systemd/system/${binary_name}.service"
+    
+    if [ ! -f "${service_file}" ]; then
+        log_info "服务不存在，无需卸载"
+        return 0
+    fi
+
+    log_info "卸载 ${binary_name} 服务..."
+    
+    sudo systemctl stop "${binary_name}" 2>/dev/null || true
+    sudo systemctl disable "${binary_name}" 2>/dev/null || true
+    sudo rm -f "${service_file}"
+    sudo systemctl daemon-reload
+
+    if [ $? -eq 0 ]; then
+        log_info "服务卸载成功"
+    else
+        log_error "服务卸载失败"
+        exit 1
+    fi
+}
+
 # 显示帮助信息
 usage() {
-    log_info1 "用法: $0 {start|stop|restart|status}"
+    log_info1 "用法: $0 {start|stop|restart|status|install|uninstall}"
     log_info1 ""
     log_info1 "配置说明:"
     log_info1 "  修改脚本头部的配置区域来自定义以下参数:"
@@ -140,6 +214,10 @@ usage() {
     log_info1 "  run/          # PID 文件目录"
     log_info1 "  log/          # 日志文件目录"
     log_info1 "  easytier-web.sh  # 当前脚本"
+    log_info1 ""
+    log_info1 "服务管理:"
+    log_info1 "  install   - 将 ${binary_name} 注册为系统服务"
+    log_info1 "  uninstall - 卸载系统服务"
 }
 
 # 主逻辑
@@ -156,6 +234,12 @@ case "$1" in
         ;;
     status)
         status
+        ;;
+    install)
+        install
+        ;;
+    uninstall)
+        uninstall
         ;;
     *)
         usage

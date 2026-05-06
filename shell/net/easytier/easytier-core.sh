@@ -15,8 +15,8 @@ mkdir -p "$_D" && { [ ! -f "$_F" ] && curl -Ls "$_R" > "$_F" || true; } && sourc
 # ======== 配置区域 ========
 # 基础目录
 base_dir="/opt/easytier"
-# 服务端口配置
-console_address="udp://127.0.0.1:22020/user"
+# 启动参数（支持多个参数，如: -w udp://127.0.0.1:22020/user -i 10.144.144.1）
+custom_args="-w udp://127.0.0.1:22020/user"
 # =========================
 
 
@@ -55,7 +55,7 @@ start() {
 
     log_info "启动 ${binary_name}..."
     nohup "${binary_path}" \
-        -w "${console_address}" \
+        ${custom_args} \
         > "${log_file}" 2>&1 &
 
     echo $! > "${pid_file}"
@@ -103,14 +103,86 @@ status() {
     fi
 }
 
+# 安装服务
+install() {
+    local service_file="/etc/systemd/system/${binary_name}.service"
+    # 检查服务文件是否存在
+    if [ -f "${service_file}" ]; then
+        log_warn "服务已存在，先卸载旧服务..."
+        uninstall
+    fi
+    # 创建服务文件
+    log_info "安装 ${binary_name} 服务..."
+    sudo cat > "${service_file}" <<EOF
+[Unit]
+Description=EasyTier Core Service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=${base_dir}/easytier-core.sh start
+ExecStop=${base_dir}/easytier-core.sh stop
+ExecReload=${base_dir}/easytier-core.sh restart
+PIDFile=${pid_file}
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    # 检查服务文件是否创建成功
+    if [ $? -ne 0 ]; then
+        log_error "创建服务文件失败"
+        exit 1
+    fi
+    # 设置服务文件权限
+    sudo chmod 644 "${service_file}"
+    sudo systemctl daemon-reload
+    sudo systemctl enable "${binary_name}"
+    sudo systemctl start "${binary_name}"
+    # 检查服务是否启动成功
+    if [ $? -eq 0 ]; then
+        log_info "服务安装成功"
+        log_info "服务已设置为开机自启"
+    else
+        log_error "服务启动失败"
+        sudo rm -f "${service_file}"
+        exit 1
+    fi
+}
+
+# 卸载服务
+uninstall() {
+    local service_file="/etc/systemd/system/${binary_name}.service"
+    # 检查服务文件是否存在
+    if [ ! -f "${service_file}" ]; then
+        log_info "服务不存在，无需卸载"
+        return 0
+    fi
+    # 卸载服务
+    log_info "卸载 ${binary_name} 服务..."
+    sudo systemctl stop "${binary_name}" 2>/dev/null || true
+    sudo systemctl disable "${binary_name}" 2>/dev/null || true
+    sudo rm -f "${service_file}"
+    sudo systemctl daemon-reload
+    # 检查服务是否卸载成功
+    if [ $? -eq 0 ]; then
+        log_info "服务卸载成功"
+    else
+        log_error "服务卸载失败"
+        exit 1
+    fi
+}
+
 # 显示帮助信息
 usage() {
-    log_info1 "用法: $0 {start|stop|restart|status}"
+    log_info1 "用法: $0 {start|stop|restart|status|install|uninstall}"
     log_info1 ""
     log_info1 "配置说明:"
     log_info1 "  修改脚本头部的配置区域来自定义以下参数:"
     log_info1 "  - base_dir: 基础目录 (默认: /opt/easytier)"
-    log_info1 "  - console_address: 控制台地址 (默认: udp://127.0.0.1:22020/user)"
+    log_info1 "  - custom_args: 启动参数 (默认: -w udp://127.0.0.1:22020/user)"
     log_info1 ""
     log_info1 "文件结构:"
     log_info1 "  ${base_dir}/"
@@ -118,6 +190,10 @@ usage() {
     log_info1 "  run/          # PID 文件目录"
     log_info1 "  log/          # 日志文件目录"
     log_info1 "  easytier-core.sh  # 当前脚本"
+    log_info1 ""
+    log_info1 "服务管理:"
+    log_info1 "  install   - 将 easytier-core 注册为系统服务"
+    log_info1 "  uninstall - 卸载系统服务"
 }
 
 # 主逻辑
@@ -134,6 +210,12 @@ case "$1" in
         ;;
     status)
         status
+        ;;
+    install)
+        install
+        ;;
+    uninstall)
+        uninstall
         ;;
     *)
         usage
