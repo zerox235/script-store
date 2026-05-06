@@ -95,3 +95,21 @@ curl -Ls https://ghfast.top/https://raw.githubusercontent.com/kahle23/script-sto
 
 <br />
 
+## 注册成服务
+
+### Windows 下
+
+```
+// display-name 服务显示名称
+// -w 传递给 easytier-core 的参数，通过 Web 控制台接入
+.\easytier-cli.exe service install --display-name "easytier-demo" -w udp://127.0.0.1:22020/admin
+
+// 删除服务
+ sc delete easytier-demo
+```
+
+<br />
+
+### Linux 下
+
+<br />
