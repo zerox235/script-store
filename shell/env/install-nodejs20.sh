@@ -10,7 +10,8 @@ mkdir /home/data/tool;
 # 下载 nodejs 压缩包
 echo "下载 NodeJS 压缩包...";
 cd /home/data/pkg;
-wget https://nodejs.org/dist/v20.18.1/node-v20.18.1-linux-x64.tar.xz;
+# wget https://nodejs.org/dist/v20.18.1/node-v20.18.1-linux-x64.tar.xz;
+wget https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz
 
 
 # 解压JDK压缩包
